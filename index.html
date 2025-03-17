@@ -147,6 +147,12 @@
 
     <script>
         const water = 300;
+const monthNames = [
+  "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+];
+
+const currentMonthName = monthNames[new Date().getMonth()];
+
         
         function loadReadings() {
             document.getElementById('previousB1').value = localStorage.getItem('previousB1') || 0;
@@ -172,7 +178,7 @@
                 const eb = (r.current - r.previous) * 8<0?"Current Reading should be greater than previous reading":(r.current - r.previous) * 8;
                 const total = typeof(eb)=="number"? r.rent + eb + r.maintenance + water:"error";
                 return `<div class="rent-box">
-                    <h3>Rent for ${r.name}</h3>
+                    <h3>${r.name}  currentMonthName</h3>
                     <p><strong>Rent:</strong> <span>${r.rent}</span></p>
                     <p><strong>Electricity (${r.previous} - ${r.current}):</strong> <span>${eb}</span></p>
                     <p><strong>Maintenance:</strong> <span>${r.maintenance}</span></p>
