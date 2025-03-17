@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #8360c3, #2ebf91);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h2 {
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+        }
+        input:disabled {
+            background-color: #e0e0e0;
+            color: #888;
+            border-color: #bbb;
+        }
+        button {
+            background: #2ebf91;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #27a77a;
+        }
+        .edit-btn {
+            background: #f39c12;
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+        .rent-box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .rent-box p {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .rent-box p:last-child {
+            border-bottom: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Rent Calculation</h2>
+        
+        <div class="section">
+            <h3>B1-Durai Kannan</h3>
+            <div class="input-group">
+                <label for="previousB1">Previous Reading:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="previousB1" disabled>
+                    <button class="edit-btn" onclick="enableEdit('previousB1')">Edit</button>
+                </div>
+                <label for="currentB1">Current Reading:</label>
+                <input type="number" id="currentB1">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>B2-Kannan</h3>
+            <div class="input-group">
+                <label for="previousB2">Previous Reading:</label>
+                <div class="input-wrapper">
+                    <input type="number" id="previousB2" disabled>
+                    <button class="edit-btn" onclick="enableEdit('previousB2')">Edit</button>
+                </div>
+                <label for="currentB2">Current Reading:</label>
+                <input type="number" id="currentB2">
+            </div>
+        </div>
+
+        <button onclick="calculateRent()">Calculate Rent</button>
+        <button onclick="saveReadings()">Save Readings</button>
+        <div id="rentDetails"></div>
+    </div>
+
+    <script>
+        const water = 200;
+        
+        function loadReadings() {
+            document.getElementById('previousB1').value = localStorage.getItem('previousB1') || 0;
+            document.getElementById('previousB2').value = localStorage.getItem('previousB2') || 0;
+            document.getElementById('currentB1').value=0
+            document.getElementById('currentB2').value=0
+            document.getElementById('previousB1').disabled = true;
+            document.getElementById('previousB2').disabled = true;
+        }
+
+        function enableEdit(id) {
+            document.getElementById(id).disabled = false;
+            document.getElementById(id).focus();
+        }
+
+        function calculateRent() {
+            const rentData = [
+                { name: "B1", rent: 10000, maintenance: 500, previous: +document.getElementById('previousB1').value, current: +document.getElementById('currentB1').value },
+                { name: "B2", rent: 10000, maintenance: 500, previous: +document.getElementById('previousB2').value, current: +document.getElementById('currentB2').value }
+            ];
+            
+            document.getElementById('rentDetails').innerHTML = rentData.map(r => {
+                const eb = (r.current - r.previous) * 10;
+                const total = r.rent + eb + r.maintenance + water;
+                return `<div class="rent-box">
+                    <h3>Rent for ${r.name}</h3>
+                    <p><strong>Rent:</strong> <span>${r.rent}</span></p>
+                    <p><strong>Electricity (${r.previous} - ${r.current}):</strong> <span>${eb}</span></p>
+                    <p><strong>Maintenance:</strong> <span>${r.maintenance}</span></p>
+                    <p><strong>Water:</strong> <span>${water}</span></p>
+                    <p><strong>Total:</strong> <span>${total}</span></p>
+                </div>`;
+            }).join('');
+        }
+
+        function saveReadings() {
+            localStorage.setItem('previousB1', document.getElementById('currentB1').value);
+            localStorage.setItem('previousB2', document.getElementById('currentB2').value);
+            document.getElementById('currentB1').value=localStorage.getItem('previousB1') || 0
+            document.getElementById('currentB2').value=localStorage.getItem('previousB2') || 0
+            alert('Readings saved successfully!');
+            loadReadings();
+        }
+
+        window.onload = loadReadings;
+    </script>
+</body>
+</html>
