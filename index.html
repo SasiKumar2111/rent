@@ -112,7 +112,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Rent Calculator</h2>
+        <h2>Rent Calculation</h2>
         
         <div class="section">
             <h3>B1-Durai Kannan</h3>
@@ -146,7 +146,7 @@
     </div>
 
     <script>
-        const water = 200;
+        const water = 300;
         
         function loadReadings() {
             document.getElementById('previousB1').value = localStorage.getItem('previousB1') || 0;
@@ -169,8 +169,8 @@
             ];
             
             document.getElementById('rentDetails').innerHTML = rentData.map(r => {
-                const eb = (r.current - r.previous) * 10;
-                const total = r.rent + eb + r.maintenance + water;
+                const eb = (r.current - r.previous) * 8<0?"Current Reading should be greater than previous reading":(r.current - r.previous) * 8;
+                const total = typeof(eb)=="number"? r.rent + eb + r.maintenance + water:"error";
                 return `<div class="rent-box">
                     <h3>Rent for ${r.name}</h3>
                     <p><strong>Rent:</strong> <span>${r.rent}</span></p>
